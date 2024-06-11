@@ -1,5 +1,6 @@
 "use client";
 import { addLoading, notifeColors, reduceLoading, setNotife } from "@/redux/Layout/reducer";
+import { loadData } from "@/redux/UserData/actions";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,11 +9,12 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(addLoading());
-    setTimeout(() => {
-      dispatch(reduceLoading());
-      dispatch(setNotife({ message: 'Loading complete!', color: notifeColors.success }));
-    }, 1000);
+    // dispatch(addLoading());
+    // setTimeout(() => {
+    //   dispatch(reduceLoading());
+    //   dispatch(setNotife({ message: 'Loading complete!', color: notifeColors.success }));
+    // }, 1000);
+    dispatch(loadData())
   }, [dispatch]);
 
   return (
