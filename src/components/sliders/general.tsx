@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect } from 'react';
 import '@splidejs/splide/dist/css/splide.min.css';
 import '@splidejs/splide/dist/css/splide-core.min.css';

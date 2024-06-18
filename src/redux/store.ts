@@ -11,7 +11,6 @@ interface ExtendedStore extends Store {
   sagaTask?: Task;
 }
 
-
 const bindMiddleware = (middleware: any) => {
   // if (process.env.NODE_ENV !== "production") {
   //   const { composeWithDevTools } = require("redux-devtools-extension");
