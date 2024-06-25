@@ -1,4 +1,6 @@
 "use client";
+import { Links } from "@/libs/datas";
+import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 
 const Navbar: React.FC = () => {
@@ -38,6 +40,18 @@ useEffect(() => {
   };
 }, []);
 
+const links1 = [
+  {name:"about", link:Links.AboutUs},
+  {name:"contact", link:Links.Contact},
+  {name:"blogs", link:Links.Blogs},
+]
+
+const links2 = [
+  {name:"Home", link:Links.Home},
+  {name:"products", link:Links.Products},
+  {name:"orders", link:Links.UserOrders},
+]
+
   return (
     <nav  id="header"
     className={`fixed top-0 left-0 right-0 border-b bg-gray-100 p-4 transition-transform duration-300 ${
@@ -46,21 +60,14 @@ useEffect(() => {
         <div className="mx-auto max-w-screen-xl px-4 py-3">
           <div className="flex items-center justify-between gap-x-4">
             <ul className="flex items-center gap-x-3">
-              <li className="hidden sm:block">
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  How to use
-                </a>
+              {links1.map((link,i)=>
+              <li key={i} className="hidden sm:block">
+                <Link href={link.link} className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
+                  {link.name}
+                </Link>
               </li>
-              <li>
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Blogs
-                </a>
-              </li>
+              )}
+             
             </ul>
             <ul className="flex items-center gap-x-3">
               <li>
@@ -135,26 +142,13 @@ useEffect(() => {
               <span className="text-lg font-black text-gray-900">CODES</span>
             </a>
             <ul className="flex items-center gap-x-6">
-              <li className="hidden md:block">
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Home
-                </a>
+            {links2.map((link,i)=>
+              <li key={i} className="hidden sm:block">
+                <Link href={link.link} className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
+                  {link.name}
+                </Link>
               </li>
-              <li className="hidden md:block">
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Products
-                </a>
-              </li>
-              <li className="hidden md:block">
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Service
-                </a>
-              </li>
-              <li className="hidden md:block">
-                <a className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-900/70">
-                  Contacts
-                </a>
-              </li>
+              )}
               <li className="flex items-center gap-x-4 md:hidden">
                 <button
                   onClick={toggleDropdown}

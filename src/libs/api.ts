@@ -1,5 +1,7 @@
 import PocketBase from "pocketbase";
 import EnvironmentConfig from "./env";
+import { CallEffect, PutEffect, SelectEffect } from "redux-saga/effects";
+import { ProductsState } from "@/redux/products/reducer";
 
 export enum Collections {
   Products = "products",
@@ -7,6 +9,46 @@ export enum Collections {
   Users = "users",
   Orders = "orders",
   Transactions = "transactions",
+}
+
+export interface ApiResponse {
+  [key: string]: any;
+  // Add other properties if there are some common ones, otherwise this is flexible enough
+}
+
+export type LoadDataSagaReturnType = Generator<
+SelectEffect | CallEffect<ApiResponse> | PutEffect<{ type: string; payload?: any; error?: any }>,
+void,
+ProductsState | ApiResponse
+>
+
+export interface ReduceState {
+  collection:Collections,
+    items: object[];
+    page: number;
+    perPage: number;
+    totalItems: number;
+    sort?: string;
+    filter?: string;
+    expand?: string;
+  }
+
+export interface AllParams {
+  collection: Collections;
+  page?: number;
+  perPage?: number;
+  sort?: string;
+  filter?: string;
+  expand?: string;
+}
+interface GetFirstFilterParams extends AllParams {
+  filter: string;
+}
+interface GetOneParams extends AllParams {
+  recordId: string;
+}
+interface PutPostParams extends GetOneParams {
+data : any  
 }
 
 class Api {
@@ -37,15 +79,17 @@ class Api {
     return options;
   }
 
-  async getPaginatedList(
-    collection: Collections,
-    page: number = 1,
-    perPage: number = 50,
-    filter?: string
-  ): Promise<any> {
+  async getPaginatedList({
+    collection,
+    page = 1,
+    perPage = 50,
+    sort,
+    filter,
+    expand,
+  }: AllParams): Promise<ApiResponse>{
     try {
-      const options = this.buildOptions(undefined, filter);
-      const resultList = await this.pb
+      const options = this.buildOptions(sort, filter, expand);
+      const resultList: ApiResponse = await this.pb
         .collection(collection)
         .getList(page, perPage, options);
       return resultList;
@@ -55,7 +99,7 @@ class Api {
     }
   }
 
-  async getFullList(collection: Collections, sort?: string): Promise<any> {
+  async getFullList({ collection, sort }: AllParams): Promise<ApiResponse> {
     try {
       const options = this.buildOptions(sort);
       const records = await this.pb.collection(collection).getFullList(options);
@@ -66,14 +110,17 @@ class Api {
     }
   }
 
-  async getFirstListItem(
-    collection: Collections,
-    filter: string
-  ): Promise<any> {
+  async getFirstListItem({
+    collection,
+    sort,
+    filter,
+    expand,
+  }: GetFirstFilterParams): Promise<ApiResponse> {
     try {
+      const options = this.buildOptions(sort, undefined, expand);
       const record = await this.pb
         .collection(collection)
-        .getFirstListItem(filter);
+        .getFirstListItem(filter, options);
       return record;
     } catch (error) {
       console.error("Error fetching first list item:", error);
@@ -81,20 +128,22 @@ class Api {
     }
   }
 
-  async getOne(
-    collection: Collections,
-    recordId: string,
-    options?: { sort?: string; filter?: string; expand?: string }
-  ): Promise<any> {
+  async getOne({
+    collection,
+    recordId,
+    sort,
+    filter,
+    expand,
+  }: GetOneParams): Promise<ApiResponse> {
     try {
-      const requestOptions = this.buildOptions(
-        options?.sort,
-        options?.filter,
-        options?.expand
+      const options = this.buildOptions(
+        sort,
+        filter,
+        expand
       );
       const record = await this.pb
         .collection(collection)
-        .getOne(recordId, requestOptions);
+        .getOne(recordId, options);
       return record;
     } catch (error) {
       console.error("Error fetching single record:", error);
@@ -102,7 +151,7 @@ class Api {
     }
   }
 
-  async createRecord(collection: Collections, data: any): Promise<any> {
+  async createRecord({collection, data}:PutPostParams): Promise<ApiResponse> {
     try {
       const record = await this.pb.collection(collection).create(data);
       return record;
@@ -112,11 +161,11 @@ class Api {
     }
   }
 
-  async updateRecord(
-    collection: Collections,
-    recordId: string,
-    data: any
-  ): Promise<any> {
+  async updateRecord({
+    collection,
+    recordId,
+    data,
+  }:PutPostParams): Promise<ApiResponse> {
     try {
       const record = await this.pb
         .collection(collection)
@@ -128,14 +177,9 @@ class Api {
     }
   }
 
-  async deleteRecord(
-    collection: Collections,
-    recordId: string
-  ): Promise<any> {
+  async deleteRecord({collection, recordId}:GetOneParams):  Promise<boolean> {
     try {
-      const record = await this.pb
-        .collection(collection)
-        .delete(recordId);
+      const record = await this.pb.collection(collection).delete(recordId);
       return record;
     } catch (error) {
       console.error("Error creating record:", error);
