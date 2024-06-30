@@ -106,9 +106,9 @@ export const Singleitem: React.FC<SingleitemComponent> = ({ item, index }) => {
 const CartsGroup: React.FC = () => {
   return (
     <>
-      <ClientComponent>
+      {/* <ClientComponent>
         <Ssr />
-      </ClientComponent>
+      </ClientComponent> */}
     </>
   );
 };

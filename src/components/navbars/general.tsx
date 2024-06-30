@@ -2,6 +2,7 @@
 import { Links } from "@/libs/datas";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
+import Search from "./search";
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -72,21 +73,7 @@ const links2 = [
             <ul className="flex items-center gap-x-3">
               <li>
                 <a className="cursor-pointer text-gray-900 hover:text-gray-900/70">
-                  <svg
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.8"
-                    stroke="currentColor"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                    />
-                  </svg>
+                 <Search/>
                 </a>
               </li>
               <li>
